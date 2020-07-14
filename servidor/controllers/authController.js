@@ -3,7 +3,9 @@ const bcryptjs = require('bcryptjs');
 const { validationResult } = require('express-validator');
 const jwt = require('jsonwebtoken');
 
-exports.crearUsuario = async (req, res) => {
+
+/* /api/auth */
+exports.autenticarUsuario = async (req, res) => {
 
     /* Revisa si hay errores */
     const errores = validationResult(req);
@@ -11,35 +13,30 @@ exports.crearUsuario = async (req, res) => {
         return res.status(400).json({ errores: errores.array() })
     };
 
-    /* extraer email y password */
-    const { email, password } = req.body;
-
+    /* Extraer email y password */
+    const {email, password} = req.body;
     try {
-        /* revisar que el usuario registrado sea unico */
-        let usuario = await Usuario.findOne({ email });
+        /* Revisar que sea un usuario registrado */
+        let usuario = await Usuario.findOne({email});
 
-        if (usuario) {
-            return res.status(400).json({ msg: 'El usuario ya existe' });
+        if(!usuario){
+            return res.status(400).json({ msg: 'El usuario no existe' })
         }
 
-        /* Crea nuevo usuario */
-        usuario = new Usuario(req.body);
+        /* Revisar el password */
+        const passCorrecto = await bcryptjs.compare(password, usuario.password);
+        if(!passCorrecto){
+            return res.status(400).json({ msg: 'Password incorrecto' });
+        }
 
-        /* Hashear password */
-        const salt = await bcryptjs.genSalt(10);
-        usuario.password = await bcryptjs.hash(password, salt);
+        /* Si todo es correcto Firmar el JWT */
 
-        /* Guardar usuario */
-        await usuario.save();
-
-        /* Crear y firmar el JWT */
         const payload = {
             usuario: {
                 id: usuario.id
             }
         };
-
-        /* Firmar el JWT */
+        
         jwt.sign(payload, process.env.SECRETA, {
             expiresIn: 3600 //DURACION DE UNA HORA
         }, (error, token) => {
@@ -47,11 +44,9 @@ exports.crearUsuario = async (req, res) => {
 
             /* Mensaje con el token */
             res.json({ token });
-
         });
 
     } catch (error) {
-        console.error(error);
-        res.status(400).json({ msg: 'Hubo un error' });
+        console.log(error);
     }
-};
+}
