@@ -1,9 +1,10 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import AlertaContext from '../../context/alertas/alertaContext';
+import AuthContext from '../../context/autenticacion/authContext';
 
 
-const NuevaCuenta = () => {
+const NuevaCuenta = (props) => {
 
     /* Extraer valores del context */
     const alertaContext = useContext(AlertaContext);
@@ -19,6 +20,23 @@ const NuevaCuenta = () => {
 
     /* Extraer informacion de usuario */
     const { nombre, email, password, confirmar } = usuario;
+
+    const authContext = useContext(AuthContext);
+    const { mensaje, autenticado, registrarUsuario } = authContext;
+
+    /* En caso de que el usuario se haya registrado, o sea registro duplicado */
+    useEffect(() => {
+        if (autenticado) {
+            alert(autenticado);
+            props.history.push('/proyectos');
+        }
+
+        if (mensaje) {
+            mostrarAlerta(mensaje.msg, mensaje.categoria);
+        }
+
+
+    }, [mensaje, autenticado, props.history]); //props.history es para redireccionar... eso es devido a react-router-dom
 
     const onChange = e => {
         guardarUsuario({
@@ -38,18 +56,19 @@ const NuevaCuenta = () => {
         }
 
         /* Password minimo 6 caracteres */
-        if(password.length<6){
+        if (password.length < 6) {
             mostrarAlerta('El password debe ser de al menos 6 caracteres', 'alerta-error');
             return;
         }
 
         /* Los 2 password son iguales */
-        if(password !== confirmar){
+        if (password !== confirmar) {
             mostrarAlerta('Los passwords no son iguales', 'alerta-error');
             return;
         }
 
         /* Pasarlo al action */
+        registrarUsuario({ nombre, email, password });
 
     }
 
