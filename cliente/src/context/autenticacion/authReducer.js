@@ -9,12 +9,19 @@ export default (state, action) => {
                 autenticado: true,
                 mensaje: null
             }
-        case REGISTRO_ERROR:
-            return {
-                ...state,
-                token: null,
-                mensaje: action.payload
-            }
+            case LOGIN_ERROR:
+            case REGISTRO_ERROR:
+                localStorage.removeItem('token')
+                return {
+                    ...state,
+                    token: null,
+                    mensaje: action.payload
+                }
+            case OBTENER_USUARIO:
+                return {
+                    ...state, 
+                    usuario: action.payload,
+                }
         default:
             return state;
     }
