@@ -10,6 +10,9 @@ const NuevaCuenta = (props) => {
     const alertaContext = useContext(AlertaContext);
     const { alerta, mostrarAlerta } = alertaContext;
 
+    const authContext = useContext(AuthContext);
+    const { mensaje, autenticado, registrarUsuario } = authContext;
+
     /* State para iniciar sesion */
     const [usuario, guardarUsuario] = useState({
         nombre: '',
@@ -20,9 +23,6 @@ const NuevaCuenta = (props) => {
 
     /* Extraer informacion de usuario */
     const { nombre, email, password, confirmar } = usuario;
-
-    const authContext = useContext(AuthContext);
-    const { mensaje, autenticado, registrarUsuario } = authContext;
 
     /* En caso de que el usuario se haya registrado, o sea registro duplicado */
     useEffect(() => {
