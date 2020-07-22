@@ -1,4 +1,4 @@
-import { FORMULARIO_PROYECTO, OBTENER_PROYECTOS, AGREGAR_PROYECTO, VALIDAR_FORMULARIO, PROYECTO_ACTUAL, ELIMINAR_PROYECTO } from '../../types';
+import { FORMULARIO_PROYECTO, OBTENER_PROYECTOS, AGREGAR_PROYECTO, PROYECTO_ERROR, VALIDAR_FORMULARIO, PROYECTO_ACTUAL, ELIMINAR_PROYECTO } from '../../types';
 /**
  * El reducer funcion igual que en Redux
  * Ayuda a manejar los distintos casos que pueden ocurrir en proyectoState 
@@ -42,14 +42,19 @@ export default (state, action) => {
             /* Va a iterar hasta que el ID coincida y mande el correspondiente y lo manda en proyecto */
             return {
                 ...state,
-                proyecto: state.proyectos.filter(proyecto => proyecto.id === action.payload)
+                proyecto: state.proyectos.filter(proyecto => proyecto._id === action.payload)
             }
         case ELIMINAR_PROYECTO:
             /* Va a eliminar SOLO el proyecto que coincide con el id */
             return {
                 ...state,
-                proyectos: state.proyectos.filter(proyecto => proyecto.id !== action.payload),
+                proyectos: state.proyectos.filter(proyecto => proyecto._id !== action.payload),
                 proyecto: null
+            }
+        case PROYECTO_ERROR:
+            return {
+                ...state,
+                mensaje: action.payload
             }
 
         default:

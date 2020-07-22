@@ -10,7 +10,7 @@ const AuthState = props => {
     const initialState = {
         token: localStorage.getItem('token'),
         autenticado: null,
-        usuario: null, 
+        usuario: null,
         mensaje: null,
         cargando: true
     }
@@ -32,6 +32,7 @@ const AuthState = props => {
             usuarioAutenticado();
 
         } catch (error) {
+            console.log('elias1');
 
             const alerta = { msg: error.response.data.msg, categoria: 'alerta-error' };
             dispatch({
@@ -44,9 +45,7 @@ const AuthState = props => {
 
     /* Retorna el usuario registrado */
     const usuarioAutenticado = async () => {
-
         const token = localStorage.getItem('token');
-
         if (token) {
             tokenAuth(token);
         }
@@ -60,7 +59,7 @@ const AuthState = props => {
             });
 
         } catch (error) {
-            console.log(error);
+            console.log('elias2');
             dispatch({
                 type: LOGIN_ERROR
             })
@@ -71,45 +70,49 @@ const AuthState = props => {
     const iniciarSesion = async datos => {
         try {
             const respuesta = await clienteAxios.post('/api/auth', datos);
-            console.log(respuesta);
 
             dispatch({
                 type: LOGIN_EXITOSO,
                 payload: respuesta.data
             });
 
-            // Obtener el usuario
+            /* Obtener el usuario */
             usuarioAutenticado();
 
         } catch (error) {
-            console.log(error.response.data.msg);
-            const alerta = { msg: error.response.data.msg, categoria: 'alerta-error' };
+            console.log('elias3');
+            const alerta = {
+                msg: error.response.data.msg,
+                categoria: 'alerta-error'
+            }
+
             dispatch({
                 type: LOGIN_ERROR,
                 payload: alerta
-            });
+            })
         }
     };
 
     /* Cierra sesion de usuario */
-    const cerrarSesion = () => {
+    const cerrarSesion = () => {
         dispatch({
             type: CERRAR_SESION
         });
     };
 
     return (
-        <AuthContext.Provider 
-        value={{ 
-            token: state.token, 
-            autenticado: state.autenticado, 
-            usuario: state.usuario, 
-            mensaje: state.mensaje, 
-            cargando: state.cargando,
-            registrarUsuario, 
-            iniciarSesion,
-            usuarioAutenticado,
-            cerrarSesion }}>
+        <AuthContext.Provider
+            value={{
+                token: state.token,
+                autenticado: state.autenticado,
+                usuario: state.usuario,
+                mensaje: state.mensaje,
+                cargando: state.cargando,
+                registrarUsuario,
+                iniciarSesion,
+                usuarioAutenticado,
+                cerrarSesion
+            }}>
             {props.children}
         </AuthContext.Provider>
     )

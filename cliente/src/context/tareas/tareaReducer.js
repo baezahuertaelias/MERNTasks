@@ -7,12 +7,12 @@ export default (state, action) => {
             /* Esto toma todas las tareas, las filtra por id las que coincidan */
             return {
                 ...state,
-                tareasproyecto: state.tareas.filter(tarea => tarea.proyectoId === action.payload)
+                tareasproyecto: action.payload
             }
         case AGREGAR_TAREA:
             return {
                 ...state,
-                tareas: [action.payload, ...state.tareas],
+                tareasproyecto: [action.payload, ...state.tareasproyecto],
                 errortarea: false
             }
         case VALIDAR_TAREA:
@@ -29,7 +29,7 @@ export default (state, action) => {
         case ESTADO_TAREA:
             return {
                 ...state,
-                tareas: state.tareas.map(tarea => tarea.id === action.payload.id ? action.payload : tarea)
+                tareasproyecto: state.tareasproyecto.map(tarea => tarea.id === action.payload.id ? action.payload : tarea )
             }
         case TAREA_ACTUAL:
             return {

@@ -1,56 +1,48 @@
 import React, { useReducer } from 'react';
-import { v4 as uuidv4 } from 'uuid';
 
 import TareaContext from './tareaContext';
 import TareaReducer from './tareaReducer';
+import clienteAxios from '../../config/axios';
 
 import { TAREAS_PROYECTO, AGREGAR_TAREA, VALIDAR_TAREA, ELIMINAR_TAREA, ESTADO_TAREA, TAREA_ACTUAL, ACTUALIZAR_TAREA, LIMPIAR_TAREA } from '../../types';
 
 const TareaState = props => {
     /*State incial */
-    const initalState = {
-        tareas: [
-            { id: 1, proyectoId: 1, nombre: 'Elegir plataforma', estado: true },
-            { id: 2, proyectoId: 2, nombre: 'Elegir colores', estado: false },
-            { id: 3, proyectoId: 3, nombre: 'Elegir plataformas de pago', estado: false },
-            { id: 4, proyectoId: 4, nombre: 'elegir hosting', estado: true },
-            { id: 5, proyectoId: 1, nombre: 'Elegir plataforma', estado: true },
-            { id: 6, proyectoId: 2, nombre: 'Elegir colores', estado: false },
-            { id: 7, proyectoId: 3, nombre: 'Elegir plataformas de pago', estado: false },
-            { id: 8, proyectoId: 4, nombre: 'Elegir plataforma', estado: true },
-            { id: 9, proyectoId: 1, nombre: 'Elegir colores', estado: false },
-            { id: 10, proyectoId: 2, nombre: 'Elegir plataformas de pago', estado: false },
-            { id: 11, proyectoId: 3, nombre: 'Elegir plataforma', estado: true },
-            { id: 12, proyectoId: 4, nombre: 'Elegir colores', estado: false },
-            { id: 13, proyectoId: 3, nombre: 'Elegir plataformas de pago', estado: false }
-        ],
-        /* Va a ser nulo hasta que el usuario elija una tarea */
-        tareasproyecto: null,
+    const initialState = {
+        tareasproyecto: [],
         errortarea: false,
         tareaseleccionada: null
     };
 
     /* Crear dispatch y state */
-    const [state, dispatch] = useReducer(TareaReducer, initalState);
+    const [state, dispatch] = useReducer(TareaReducer, initialState);
 
     /* Crear funciones */
     /* Obtener las tareas de un proyecto */
-    const obtenerTareas = proyectoId => {
-        dispatch({
-            type: TAREAS_PROYECTO,
-            payload: proyectoId
-        });
+    const obtenerTareas = async proyecto => {
+        try {
+            const resultado = await clienteAxios.get('/api/tareas', { params: { proyecto } });
+            dispatch({
+                type: TAREAS_PROYECTO,
+                payload: resultado.data.tareas
+            })
+        } catch (error) {
+            console.log(error);
+        }
     };
 
     /* Agregar tarea al proyecto seleccionado */
-    const agregarTarea = tarea => {
-        /* Agrego un id unico, pq estaria borrando varias tareas que no deberia */
-        tarea.id = uuidv4();
-
-        dispatch({
-            type: AGREGAR_TAREA,
-            payload: tarea
-        })
+    const agregarTarea = async tarea => {
+        try {
+            const resultado = await clienteAxios.post('/api/tareas', tarea);
+            console.log(resultado);
+            dispatch({
+                type: AGREGAR_TAREA,
+                payload: tarea
+            })
+        } catch (error) {
+            console.log(error);
+        }
     };
 
     /* Valida y muestra un error en caso que exista */
@@ -101,7 +93,6 @@ const TareaState = props => {
 
     return (
         <TareaContext.Provider value={{
-            tareas: state.tareas,
             tareasproyecto: state.tareasproyecto,
             errortarea: state.errortarea,
             tareaseleccionada: state.tareaseleccionada,
