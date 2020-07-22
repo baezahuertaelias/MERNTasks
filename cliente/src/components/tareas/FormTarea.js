@@ -57,13 +57,12 @@ const FormTarea = () => {
         if (nombre.trim() === '') {
             validarTarea();
             return;
-        }
+        } 
 
         /* Revisar si es edicion o nueva tarea */
         if (tareaseleccionada === null) {
             /* Agregar la nueva tarea al state de tareas */
-            tarea.proyectoId = proyectoActual.id;
-            tarea.estado = false;
+            tarea.proyecto = proyectoActual._id;
             agregarTarea(tarea);
         } else {
             /* Actualizar tarea existente */

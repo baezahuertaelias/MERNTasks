@@ -14,6 +14,7 @@ const Proyectos = () => {
   /* Revisara si hay token activo */
   useEffect(() => {
     usuarioAutenticado();
+    // eslint-disable-next-line
   }, [])
 
   return (

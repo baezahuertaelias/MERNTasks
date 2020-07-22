@@ -22,8 +22,7 @@ const Login = (props) => {
         if (mensaje) {
             mostrarAlerta(mensaje.msg, mensaje.categoria);
         }
-
-
+        // eslint-disable-next-line
     }, [mensaje, autenticado, props.history]); //props.history es para redireccionar... eso es devido a react-router-dom
 
     /* State para iniciar sesion */
